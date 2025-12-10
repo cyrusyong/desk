@@ -3,6 +3,7 @@ export const handler = async (event) => {
   //
   // Test Comment for actions
   const body = JSON.parse(event.body);
+  console.log("hello there");
 
   const response = {
     statusCode: 200,
