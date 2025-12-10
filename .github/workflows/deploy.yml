@@ -1,25 +1,61 @@
-name: Deploy Lambda
+name: Deploy Lambda Functions
 
 on:
   push:
     branches: ["main"]
+    paths:
+      - "getS3url/**"
+      - "store-data/**"
 
 jobs:
-  deploy:
+  # ----------------------------
+  # Deploy getS3url Lambda
+  # ----------------------------
+  deploy-getS3url:
+    if: contains(github.event.head_commit.modified, 'getS3url/')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Install dependencies
+        working-directory: ./getS3url
         run: npm install
 
       - name: Zip Lambda
-        run: zip -r function.zip .
+        working-directory: ./getS3url
+        run: zip -r ../getS3url.zip .
 
-      - name: Deploy to Lambda
+      - name: Deploy to AWS Lambda
         uses: appleboy/lambda-action@v0.1.9
         with:
           aws_access_key_id: ${{ secrets.AWS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET }}
-          function_name: GETS3URL_GIT
-          zip_file: function.zip
+          function_name: getS3url # <-- change if your AWS function name differs
+          zip_file: getS3url.zip
+
+  # ----------------------------
+  # Deploy store-data Lambda
+  # ----------------------------
+  deploy-store-data:
+    if: contains(github.event.head_commit.modified, 'store-data/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        working-directory: ./store-data
+        run: npm install
+
+      - name: Zip Lambda
+        working-directory: ./store-data
+        run: zip -r ../store-data.zip .
+
+      - name: Deploy to AWS Lambda
+        uses: appleboy/lambda-action@v0.1.9
+        with:
+          aws_access_key_id: ${{ secrets.AWS_KEY }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET }}
+          function_name: store-data # <-- change if your AWS function name differs
+          zip_file: store-data.zip

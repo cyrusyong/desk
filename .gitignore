@@ -1,0 +1,14 @@
+node_modules/
+**/node_modules/
+*.zip
+.env
+*.env
+.DS_Store
+npm-debug.log
+yarn-error.log
+debug.log
+.aws-sam/
+.serverless/
+cdk.out/
+.tmp/
+temp/
