@@ -3,16 +3,21 @@ name: Deploy Lambda Functions
 on:
   push:
     branches: ["main"]
+    paths:
+      - "getS3url/**"
+      - "store-data/**"
 
 jobs:
   deploy-getS3url:
+    # Run only if *any* changed file path contains this folder name
+    if: contains( join(github.event.head_commit.added, ',')
+      || join(github.event.head_commit.modified, ',')
+      || join(github.event.head_commit.removed, ','),
+      'getS3url/' )
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, '[skip]') == false
+
     steps:
       - uses: actions/checkout@v3
-    # Trigger only when getS3url folder changed
-    paths:
-      - "getS3url/**"
 
       - name: Install dependencies
         working-directory: ./getS3url
@@ -27,14 +32,16 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET }}
-          function_name: getS3url
+          function_name: getS3url # <-- change if needed
           zip_file: getS3url.zip
 
   deploy-store-data:
+    if: contains( join(github.event.head_commit.added, ',')
+      || join(github.event.head_commit.modified, ',')
+      || join(github.event.head_commit.removed, ','),
+      'store-data/' )
     runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.message, '[skip]') == false
-    paths:
-      - "store-data/**"
+
     steps:
       - uses: actions/checkout@v3
 
@@ -51,5 +58,5 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET }}
-          function_name: store-data
+          function_name: store-data # <-- change if needed
           zip_file: store-data.zip
