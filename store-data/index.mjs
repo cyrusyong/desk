@@ -1,7 +1,7 @@
 export const handler = async (event) => {
   // TODO implement
   const body = JSON.parse(event.body);
-  console.log("hello thereeee");
+  console.log("hello thereeeee");
 
   const response = {
     statusCode: 200,
