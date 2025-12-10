@@ -28,7 +28,8 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          function_name: getS3url # <-- put the exact AWS Lambda name here
+          aws_region: us-east-2
+          function_name: getS3url
           zip_file: getS3url.zip
 
   deploy-store-data:
@@ -51,5 +52,6 @@ jobs:
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          function_name: store-data # <-- put the exact AWS Lambda name here
+          aws_region: us-east-2
+          function_name: store-data
           zip_file: store-data.zip
