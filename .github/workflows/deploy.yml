@@ -9,54 +9,47 @@ on:
 
 jobs:
   deploy-getS3url:
-    # Run only if *any* changed file path contains this folder name
-    if: contains( join(github.event.head_commit.added, ',')
-      || join(github.event.head_commit.modified, ',')
-      || join(github.event.head_commit.removed, ','),
-      'getS3url/' )
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install dependencies (getS3url)
         working-directory: ./getS3url
         run: npm install
 
-      - name: Zip Lambda
+      - name: Zip getS3url Lambda
         working-directory: ./getS3url
         run: zip -r ../getS3url.zip .
 
-      - name: Deploy Lambda
+      - name: Deploy getS3url Lambda
         uses: appleboy/lambda-action@v0.1.9
         with:
           aws_access_key_id: ${{ secrets.AWS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET }}
-          function_name: getS3url # <-- change if needed
+          function_name: getS3url # <-- put the exact AWS Lambda name here
           zip_file: getS3url.zip
 
   deploy-store-data:
-    if: contains( join(github.event.head_commit.added, ',')
-      || join(github.event.head_commit.modified, ',')
-      || join(github.event.head_commit.removed, ','),
-      'store-data/' )
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install dependencies (store-data)
         working-directory: ./store-data
         run: npm install
 
-      - name: Zip Lambda
+      - name: Zip store-data Lambda
         working-directory: ./store-data
         run: zip -r ../store-data.zip .
 
-      - name: Deploy Lambda
+      - name: Deploy store-data Lambda
         uses: appleboy/lambda-action@v0.1.9
         with:
           aws_access_key_id: ${{ secrets.AWS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET }}
-          function_name: store-data # <-- change if needed
+          function_name: store-data # <-- put the exact AWS Lambda name here
           zip_file: store-data.zip
