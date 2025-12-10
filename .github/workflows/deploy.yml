@@ -3,20 +3,16 @@ name: Deploy Lambda Functions
 on:
   push:
     branches: ["main"]
-    paths:
-      - "getS3url/**"
-      - "store-data/**"
 
 jobs:
-  # ----------------------------
-  # Deploy getS3url Lambda
-  # ----------------------------
   deploy-getS3url:
-    if: contains(github.event.head_commit.modified, 'getS3url/')
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[skip]') == false
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+    # Trigger only when getS3url folder changed
+    paths:
+      - "getS3url/**"
 
       - name: Install dependencies
         working-directory: ./getS3url
@@ -26,23 +22,21 @@ jobs:
         working-directory: ./getS3url
         run: zip -r ../getS3url.zip .
 
-      - name: Deploy to AWS Lambda
+      - name: Deploy Lambda
         uses: appleboy/lambda-action@v0.1.9
         with:
           aws_access_key_id: ${{ secrets.AWS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET }}
-          function_name: getS3url # <-- change if your AWS function name differs
+          function_name: getS3url
           zip_file: getS3url.zip
 
-  # ----------------------------
-  # Deploy store-data Lambda
-  # ----------------------------
   deploy-store-data:
-    if: contains(github.event.head_commit.modified, 'store-data/')
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[skip]') == false
+    paths:
+      - "store-data/**"
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Install dependencies
         working-directory: ./store-data
@@ -52,10 +46,10 @@ jobs:
         working-directory: ./store-data
         run: zip -r ../store-data.zip .
 
-      - name: Deploy to AWS Lambda
+      - name: Deploy Lambda
         uses: appleboy/lambda-action@v0.1.9
         with:
           aws_access_key_id: ${{ secrets.AWS_KEY }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET }}
-          function_name: store-data # <-- change if your AWS function name differs
+          function_name: store-data
           zip_file: store-data.zip
