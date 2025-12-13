@@ -8,7 +8,7 @@ const client = new DynamoDBClient({
 const doc_client = new DynamoDBDocumentClient(client);
 
 export const handler = async (event) => {
-  const id = event.parameters.id;
+  const id = event.queryStringParameters.id;
 
   const params = {
     TableName: "S3_Metadata",
