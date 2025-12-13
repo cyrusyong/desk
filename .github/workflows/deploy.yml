@@ -6,6 +6,7 @@ on:
     paths:
       - "getS3url/**"
       - "store-data/**"
+      - "get-data/**"
 
 jobs:
   deploy-getS3url:
@@ -55,3 +56,27 @@ jobs:
           aws_region: us-east-2
           function_name: store-data
           zip_file: store-data.zip
+
+  deploy-get-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies (get-data)
+        working-directory: ./get-data
+        run: npm install
+
+      - name: Zip store-data Lambda
+        working-directory: ./get-data
+        run: zip -r ../get-data.zip .
+
+      - name: Deploy get-data Lambda
+        uses: appleboy/lambda-action@v0.1.9
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-2
+          function_name: get-data
+          zip_file: get-data.zip
