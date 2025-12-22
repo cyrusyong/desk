@@ -8,6 +8,8 @@ function App() {
 
   const [file, setFile] = useState();
 
+  const [friendlyURL, setFriendlyURL] = useState();
+
   const getMetadata = (event) => {
     const file = event.target.files[0];
 
@@ -52,8 +54,9 @@ function App() {
               }),
             },
           )
-            .then(() => {
-              console.log("provide shortened link");
+            .then(async (res) => {
+              const { simpleID } = await res.json();
+              setFriendlyURL(window.location.origin + "/" + simpleID);
             })
             .catch((err) => {
               console.log(err);
@@ -77,6 +80,18 @@ function App() {
         >
           Upload
         </button>
+
+        {friendlyURL ? (
+          <a
+            onClick={() => {
+              console.log("naviagte to file detail page + download");
+            }}
+          >
+            {friendlyURL}
+          </a>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );
