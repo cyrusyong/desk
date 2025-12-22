@@ -30,7 +30,9 @@ export const handler = async (event) => {
 
     const response = {
       statusCode: 200,
-      body: "Sent to DB",
+      body: {
+        simpleID: simpleID,
+      },
     };
 
     return response;
