@@ -30,9 +30,9 @@ export const handler = async (event) => {
 
     const response = {
       statusCode: 200,
-      body: {
+      body: JSON.stringify({
         simpleID: simpleID,
-      },
+      }),
     };
 
     return response;
