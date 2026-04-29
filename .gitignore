@@ -12,3 +12,4 @@ debug.log
 cdk.out/
 .tmp/
 temp/
+.cd
