@@ -7,25 +7,25 @@ on:
       - "getS3url/**"
       - "store-data/**"
       - "get-data/**"
+      - "deleteS3Object/**"
 
 jobs:
   deploy-getS3url:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install dependencies (getS3url)
+      - name: Install dependencies
         working-directory: ./getS3url
         run: npm install
 
-      - name: Zip getS3url Lambda
+      - name: Zip Lambda
         working-directory: ./getS3url
         run: zip -r ../getS3url.zip .
 
-      - name: Deploy getS3url Lambda
-        uses: appleboy/lambda-action@v0.1.9
+      - name: Deploy Lambda
+        uses: appleboy/lambda-action@v0.2.0
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -35,21 +35,20 @@ jobs:
 
   deploy-store-data:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install dependencies (store-data)
+      - name: Install dependencies
         working-directory: ./store-data
         run: npm install
 
-      - name: Zip store-data Lambda
+      - name: Zip Lambda
         working-directory: ./store-data
         run: zip -r ../store-data.zip .
 
-      - name: Deploy store-data Lambda
-        uses: appleboy/lambda-action@v0.1.9
+      - name: Deploy Lambda
+        uses: appleboy/lambda-action@v0.2.0
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -59,24 +58,46 @@ jobs:
 
   deploy-get-data:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Install dependencies (get-data)
+      - name: Install dependencies
         working-directory: ./get-data
         run: npm install
 
-      - name: Zip store-data Lambda
+      - name: Zip Lambda
         working-directory: ./get-data
         run: zip -r ../get-data.zip .
 
-      - name: Deploy get-data Lambda
-        uses: appleboy/lambda-action@v0.1.9
+      - name: Deploy Lambda
+        uses: appleboy/lambda-action@v0.2.0
         with:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws_region: us-east-2
           function_name: get-data
           zip_file: get-data.zip
+
+  deploy-delete-s3-object:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        working-directory: ./deleteS3Object
+        run: npm install
+
+      - name: Zip Lambda
+        working-directory: ./deleteS3Object
+        run: zip -r ../deleteS3Object.zip .
+
+      - name: Deploy Lambda
+        uses: appleboy/lambda-action@v0.2.0
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-2
+          function_name: deleteS3Object
+          zip_file: deleteS3Object.zip
