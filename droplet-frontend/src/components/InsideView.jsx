@@ -5,8 +5,13 @@ function buildEnvelope(opened = false) {
   const W = 56;
   const Ht = 36;
   const rows = Array.from({ length: Ht }, () => Array(W).fill(" "));
-  const set = (x, y, c) => { if (y >= 0 && y < Ht && x >= 0 && x < W) rows[y][x] = c; };
-  const rect = (x, y, w, h, c) => { for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) set(xx, yy, c); };
+  const set = (x, y, c) => {
+    if (y >= 0 && y < Ht && x >= 0 && x < W) rows[y][x] = c;
+  };
+  const rect = (x, y, w, h, c) => {
+    for (let yy = y; yy < y + h; yy++)
+      for (let xx = x; xx < x + w; xx++) set(xx, yy, c);
+  };
   const hline = (x, y, w, c) => rect(x, y, w, 1, c);
   const vline = (x, y, h, c) => rect(x, y, 1, h, c);
 
@@ -83,7 +88,9 @@ function formatBytes(n) {
 
 function Envelope({ file, index, onClick, px }) {
   const [hover, setHover] = useState(false);
-  const wobble = hover ? "translateY(-6px) rotate(-2deg)" : "translateY(0) rotate(0)";
+  const wobble = hover
+    ? "translateY(-6px) rotate(-2deg)"
+    : "translateY(0) rotate(0)";
   return (
     <button
       onClick={() => onClick(file, index)}
@@ -147,7 +154,8 @@ export function InsideView({ files, visible, onBack, onOpenLetter, px = 3 }) {
       style={{
         position: "fixed",
         inset: 0,
-        background: "radial-gradient(ellipse at 50% 30%, #1a3a6a 0%, #0d2548 55%, #050d1f 100%)",
+        background:
+          "radial-gradient(ellipse at 50% 30%, #1a3a6a 0%, #0d2548 55%, #050d1f 100%)",
         opacity: visible ? 1 : 0,
         transform: visible ? "scale(1)" : "scale(1.4)",
         transition: "opacity 0.5s, transform 0.6s cubic-bezier(.22,1,.36,1)",
@@ -258,7 +266,13 @@ export function InsideView({ files, visible, onBack, onOpenLetter, px = 3 }) {
             }}
           >
             {files.map((f, i) => (
-              <Envelope key={i} file={f} index={i} onClick={onOpenLetter} px={px} />
+              <Envelope
+                key={i}
+                file={f}
+                index={i}
+                onClick={onOpenLetter}
+                px={px}
+              />
             ))}
           </div>
         )}
@@ -281,7 +295,14 @@ const pixelButton = {
 
 function Row({ label, value }) {
   return (
-    <div style={{ display: "flex", gap: 12, marginBottom: 8, alignItems: "baseline" }}>
+    <div
+      style={{
+        display: "flex",
+        gap: 12,
+        marginBottom: 8,
+        alignItems: "baseline",
+      }}
+    >
       <div
         style={{
           fontFamily: "'Press Start 2P', monospace",
@@ -294,7 +315,15 @@ function Row({ label, value }) {
       >
         {label}
       </div>
-      <div style={{ fontFamily: "'VT323', monospace", fontSize: 20, color: "#1b2a3a", flex: 1, wordBreak: "break-all" }}>
+      <div
+        style={{
+          fontFamily: "'VT323', monospace",
+          fontSize: 20,
+          color: "#1b2a3a",
+          flex: 1,
+          wordBreak: "break-all",
+        }}
+      >
         {value}
       </div>
     </div>
@@ -304,16 +333,25 @@ function Row({ label, value }) {
 function guessKind(name) {
   const ext = (name || "").split(".").pop()?.toLowerCase() || "";
   const map = {
-    png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif",
-    pdf: "application/pdf", txt: "text/plain", md: "text/markdown",
-    zip: "application/zip", mp4: "video/mp4", json: "application/json",
+    png: "image/png",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    gif: "image/gif",
+    pdf: "application/pdf",
+    txt: "text/plain",
+    md: "text/markdown",
+    zip: "application/zip",
+    mp4: "video/mp4",
+    json: "application/json",
   };
   return map[ext] || "application/octet-stream";
 }
 
 export function LetterOverlay({ file, onClose }) {
   if (!file) return null;
-  const url = file.url || `https://s3.us-east-2.amazonaws.com/droplet.app/${file.fieldId}`;
+  const url =
+    file.url ||
+    `https://s3.us-east-2.amazonaws.com/droplet.app/${file.fieldId}`;
 
   return (
     <div
@@ -338,7 +376,15 @@ export function LetterOverlay({ file, onClose }) {
           animation: "letterRise 0.5s cubic-bezier(.22,1.2,.36,1) both",
         }}
       >
-        <div style={{ position: "absolute", left: "50%", top: 0, transform: "translateX(-50%)", opacity: 0.9 }}>
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: 0,
+            transform: "translateX(-50%)",
+            opacity: 0.9,
+          }}
+        >
           <EnvelopeSprite opened={true} px={4} />
         </div>
 
@@ -368,7 +414,14 @@ export function LetterOverlay({ file, onClose }) {
             }}
           >
             <div>
-              <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 12, letterSpacing: 1, marginBottom: 8 }}>
+              <div
+                style={{
+                  fontFamily: "'Press Start 2P', monospace",
+                  fontSize: 12,
+                  letterSpacing: 1,
+                  marginBottom: 8,
+                }}
+              >
                 DROPLET
               </div>
               <div style={{ fontSize: 18, color: "#7a4a32" }}>
@@ -377,7 +430,8 @@ export function LetterOverlay({ file, onClose }) {
             </div>
             <div
               style={{
-                width: 56, height: 56,
+                width: 56,
+                height: 56,
                 background: "#c8423a",
                 border: "3px solid #1b2a3a",
                 color: "#f4ecd6",
@@ -392,7 +446,9 @@ export function LetterOverlay({ file, onClose }) {
                 boxShadow: "2px 2px 0 0 #0a1422",
               }}
             >
-              FIRST<br />CLASS
+              FIRST
+              <br />
+              CLASS
             </div>
           </div>
 
@@ -412,8 +468,6 @@ export function LetterOverlay({ file, onClose }) {
           <Row label="size" value={formatBytes(file.size)} />
           <Row label="kind" value={file.type || guessKind(file.name)} />
           <Row label="filed" value={file.filedAt || "just now"} />
-          <Row label="field id" value={file.fieldId || "—"} />
-
           <div style={{ height: 18 }} />
 
           <div
@@ -442,17 +496,32 @@ export function LetterOverlay({ file, onClose }) {
               href={url}
               target="_blank"
               rel="noreferrer"
-              style={{ color: "#1b2a3a", textDecoration: "underline", fontFamily: "'VT323', monospace", fontSize: 18 }}
+              style={{
+                color: "#1b2a3a",
+                textDecoration: "underline",
+                fontFamily: "'VT323', monospace",
+                fontSize: 18,
+              }}
             >
               {url}
             </a>
           </div>
 
           <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
-            <button onClick={() => navigator.clipboard?.writeText(url)} style={pixelButton}>
+            <button
+              onClick={() => navigator.clipboard?.writeText(url)}
+              style={pixelButton}
+            >
               COPY LINK
             </button>
-            <button onClick={onClose} style={{ ...pixelButton, background: "#1b2a3a", color: "#f4ecd6" }}>
+            <button
+              onClick={onClose}
+              style={{
+                ...pixelButton,
+                background: "#1b2a3a",
+                color: "#f4ecd6",
+              }}
+            >
               CLOSE
             </button>
           </div>

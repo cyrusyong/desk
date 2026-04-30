@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Dresser, FileSprite } from "./components/Dresser";
 import { InsideView, LetterOverlay } from "./components/InsideView";
+import { MailTruckLoader } from "./components/MailTruckLoader";
 import {
   useTweaks,
   TweaksPanel,
@@ -283,7 +284,10 @@ export default function App() {
           pointerEvents: view === "box" ? "auto" : "none",
         }}
       >
-        <div ref={stageRef} style={{ position: "relative", width: 60 * px, height: 96 * px }}>
+        <div
+          ref={stageRef}
+          style={{ position: "relative", width: 60 * px, height: 96 * px }}
+        >
           <div
             data-door
             onMouseEnter={() => setDoorHover(true)}
@@ -371,6 +375,11 @@ export default function App() {
           }}
         />
       )}
+
+      <MailTruckLoader
+        isLoading={files.some((f) => f.uploading)}
+        uploadingFiles={files.filter((f) => f.uploading)}
+      />
 
       <TweaksPanel title="Tweaks">
         <TweakSection label="Mailbox">
