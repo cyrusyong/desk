@@ -7,6 +7,7 @@ on:
       - "getS3url/**"
       - "store-data/**"
       - "get-data/**"
+      - "list-data/**"
       - "deleteS3Object/**"
 
 jobs:
@@ -78,6 +79,29 @@ jobs:
           aws_region: us-east-2
           function_name: get-data
           zip_file: get-data.zip
+
+  deploy-list-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        working-directory: ./list-data
+        run: npm install
+
+      - name: Zip Lambda
+        working-directory: ./list-data
+        run: zip -r ../list-data.zip .
+
+      - name: Deploy Lambda
+        uses: appleboy/lambda-action@v0.2.0
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-2
+          function_name: list-data
+          zip_file: list-data.zip
 
   deploy-delete-s3-object:
     runs-on: ubuntu-latest

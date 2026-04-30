@@ -70,6 +70,28 @@ export default function App() {
   const [flyer, setFlyer] = useState(null);
   const stageRef = useRef(null);
 
+  useEffect(() => {
+    fetch(`${API_BASE}/list-data`)
+      .then((r) => r.json())
+      .then(({ items }) => {
+        const loaded = (items || []).map((item) => ({
+          name: item.fileName,
+          size: item.fileSize,
+          type: item.fileExtension
+            ? `application/${item.fileExtension}`
+            : "application/octet-stream",
+          fieldId: item.fieldID,
+          simpleID: item.simpleID,
+          url: `https://s3.us-east-2.amazonaws.com/droplet.app/${item.fieldID}`,
+          filedAt: item.TTL
+            ? new Date((item.TTL - 86400) * 1000).toLocaleString()
+            : "—",
+        }));
+        setFiles(loaded);
+      })
+      .catch(() => {});
+  }, []);
+
   const dropOpenAmount =
     drawerState === "open" || drawerState === "catching"
       ? 1
