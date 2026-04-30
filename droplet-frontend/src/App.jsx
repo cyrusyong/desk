@@ -21,6 +21,24 @@ const TWEAK_DEFAULTS = {
   pixelScale: 5,
 };
 
+const TRACKING_ADJECTIVES = [
+  "blue", "red", "gold", "dark", "wild", "fast", "keen", "bold", "warm", "cool",
+];
+const TRACKING_ANIMALS = [
+  "fox", "owl", "bear", "wolf", "hawk", "deer", "crow", "lynx", "frog", "crab",
+];
+
+function getOrCreateTrackingNumber() {
+  const stored = localStorage.getItem("droplet_tracking_id");
+  if (stored) return stored;
+  const adj = TRACKING_ADJECTIVES[Math.floor(Math.random() * TRACKING_ADJECTIVES.length)];
+  const animal = TRACKING_ANIMALS[Math.floor(Math.random() * TRACKING_ANIMALS.length)];
+  const digit = Math.floor(Math.random() * 9) + 1;
+  const id = `${adj}-${animal}-${digit}`;
+  localStorage.setItem("droplet_tracking_id", id);
+  return id;
+}
+
 function rid() {
   return Array.from(
     { length: 8 },
@@ -29,7 +47,7 @@ function rid() {
   ).join("");
 }
 
-async function uploadFile(file) {
+async function uploadFile(file, trackingNumber) {
   const { fieldId, uploadUrl } = await fetch(`${API_BASE}/create-upload-url`, {
     method: "POST",
   }).then((r) => r.json());
@@ -44,6 +62,7 @@ async function uploadFile(file) {
       fileName: file.name,
       fileExtension: file.name.split(".").pop(),
       fileSize: file.size,
+      trackingNumber,
     }),
   }).then((r) => r.json());
 
@@ -71,8 +90,10 @@ export default function App() {
   const [flyer, setFlyer] = useState(null);
   const stageRef = useRef(null);
 
-  useEffect(() => {
-    fetch(`${API_BASE}/list-data`)
+  const [trackingNumber, setTrackingNumber] = useState(() => getOrCreateTrackingNumber());
+
+  function fetchByTracking(id) {
+    fetch(`${API_BASE}/list-data?trackingNumber=${encodeURIComponent(id)}`)
       .then((r) => r.json())
       .then(({ items }) => {
         const loaded = (items || []).map((item) => ({
@@ -91,6 +112,10 @@ export default function App() {
         setFiles(loaded);
       })
       .catch(() => {});
+  }
+
+  useEffect(() => {
+    fetchByTracking(trackingNumber);
   }, []);
 
   const dropOpenAmount =
@@ -201,7 +226,7 @@ export default function App() {
         setFiles((prev) => [...optimistic, ...prev]);
 
         fl.forEach((file) => {
-          uploadFile(file)
+          uploadFile(file, trackingNumber)
             .then(({ fieldId, simpleID, url }) => {
               setFiles((prev) =>
                 prev.map((entry) =>
@@ -362,6 +387,12 @@ export default function App() {
           setView("letter");
         }}
         px={3}
+        trackingNumber={trackingNumber}
+        onTrackingNumberChange={(id) => {
+          setTrackingNumber(id);
+          localStorage.setItem("droplet_tracking_id", id);
+        }}
+        onLookup={(id) => fetchByTracking(id)}
       />
 
       {view === "letter" && (

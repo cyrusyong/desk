@@ -149,7 +149,165 @@ function Envelope({ file, index, onClick, px }) {
   );
 }
 
-export function InsideView({ files, visible, onBack, onOpenLetter, px = 3 }) {
+function TrackingBar({ trackingNumber, onTrackingNumberChange, onLookup }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(trackingNumber);
+
+  function handleSave() {
+    const trimmed = draft.trim();
+    if (trimmed) {
+      onTrackingNumberChange(trimmed);
+      setEditing(false);
+    }
+  }
+
+  function handleLookup() {
+    const trimmed = draft.trim();
+    if (trimmed) {
+      onTrackingNumberChange(trimmed);
+      onLookup(trimmed);
+      setEditing(false);
+    }
+  }
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: "#f4ecd6",
+        borderTop: "3px solid #1b2a3a",
+        boxShadow: "0 -4px 0 0 #0a1422",
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "12px 24px",
+        zIndex: 10,
+      }}
+    >
+      <div
+        style={{
+          fontFamily: "'Press Start 2P', monospace",
+          fontSize: 8,
+          color: "#7a4a32",
+          letterSpacing: 1,
+          whiteSpace: "nowrap",
+        }}
+      >
+        TRACKING NO:
+      </div>
+
+      {editing ? (
+        <input
+          autoFocus
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleLookup();
+            if (e.key === "Escape") setEditing(false);
+          }}
+          style={{
+            fontFamily: "'VT323', monospace",
+            fontSize: 20,
+            color: "#1b2a3a",
+            background: "#fff8e1",
+            border: "2px solid #1b2a3a",
+            padding: "4px 8px",
+            outline: "none",
+            flex: 1,
+            maxWidth: 240,
+            boxShadow: "2px 2px 0 0 #0a1422",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            fontFamily: "'VT323', monospace",
+            fontSize: 22,
+            color: "#1b2a3a",
+            letterSpacing: 1,
+            flex: 1,
+          }}
+        >
+          {trackingNumber}
+        </div>
+      )}
+
+      {editing ? (
+        <>
+          <button
+            onClick={handleSave}
+            style={{
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: 8,
+              letterSpacing: 0.5,
+              background: "#1b2a3a",
+              color: "#f4ecd6",
+              border: "3px solid #1b2a3a",
+              padding: "8px 10px",
+              cursor: "pointer",
+              boxShadow: "3px 3px 0 0 #0a1422",
+            }}
+          >
+            SAVE
+          </button>
+          <button
+            onClick={handleLookup}
+            style={{
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: 8,
+              letterSpacing: 0.5,
+              background: "#c8423a",
+              color: "#f4ecd6",
+              border: "3px solid #1b2a3a",
+              padding: "8px 10px",
+              cursor: "pointer",
+              boxShadow: "3px 3px 0 0 #0a1422",
+            }}
+          >
+            LOOK UP
+          </button>
+          <button
+            onClick={() => { setDraft(trackingNumber); setEditing(false); }}
+            style={{
+              fontFamily: "'Press Start 2P', monospace",
+              fontSize: 8,
+              background: "transparent",
+              color: "#1b2a3a",
+              border: "3px solid #1b2a3a",
+              padding: "8px 10px",
+              cursor: "pointer",
+              boxShadow: "3px 3px 0 0 #0a1422",
+            }}
+          >
+            ✕
+          </button>
+        </>
+      ) : (
+        <button
+          onClick={() => { setDraft(trackingNumber); setEditing(true); }}
+          style={{
+            fontFamily: "'Press Start 2P', monospace",
+            fontSize: 8,
+            letterSpacing: 0.5,
+            background: "#f4ecd6",
+            color: "#1b2a3a",
+            border: "3px solid #1b2a3a",
+            padding: "8px 10px",
+            cursor: "pointer",
+            boxShadow: "3px 3px 0 0 #0a1422",
+          }}
+        >
+          EDIT
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function InsideView({ files, visible, onBack, onOpenLetter, px = 3, trackingNumber, onTrackingNumberChange, onLookup }) {
   return (
     <div
       style={{
@@ -223,6 +381,12 @@ export function InsideView({ files, visible, onBack, onOpenLetter, px = 3 }) {
         </span>
       </div>
 
+      <TrackingBar
+        trackingNumber={trackingNumber}
+        onTrackingNumberChange={onTrackingNumberChange}
+        onLookup={onLookup}
+      />
+
       <div
         style={{
           position: "absolute",
@@ -230,7 +394,7 @@ export function InsideView({ files, visible, onBack, onOpenLetter, px = 3 }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "100px 40px 60px",
+          padding: "100px 40px 100px",
           overflowY: "auto",
         }}
       >
