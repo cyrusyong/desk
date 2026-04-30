@@ -164,7 +164,6 @@ function TrackingBar({ trackingNumber, onTrackingNumberChange, onLookup }) {
   function handleLookup() {
     const trimmed = draft.trim();
     if (trimmed) {
-      onTrackingNumberChange(trimmed);
       onLookup(trimmed);
       setEditing(false);
     }
@@ -174,17 +173,18 @@ function TrackingBar({ trackingNumber, onTrackingNumberChange, onLookup }) {
     <div
       style={{
         position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
+        bottom: 28,
+        left: "50%",
+        transform: "translateX(-50%)",
         background: "#f4ecd6",
-        borderTop: "3px solid #1b2a3a",
-        boxShadow: "0 -4px 0 0 #0a1422",
+        border: "3px solid #1b2a3a",
+        boxShadow: "5px 5px 0 0 #0a1422",
         display: "flex",
         alignItems: "center",
         gap: 12,
-        padding: "12px 24px",
+        padding: "12px 20px",
         zIndex: 10,
+        whiteSpace: "nowrap",
       }}
     >
       <div
@@ -394,7 +394,7 @@ export function InsideView({ files, visible, onBack, onOpenLetter, px = 3, track
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "100px 40px 100px",
+          padding: "100px 40px 120px",
           overflowY: "auto",
         }}
       >
