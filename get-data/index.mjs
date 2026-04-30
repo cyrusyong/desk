@@ -24,7 +24,14 @@ export const handler = async (event) => {
     data.Item["object_url"] =
       `https://s3.us-east-2.amazonaws.com/droplet.app/${fieldID}`;
 
-    return { status: 200, body: data };
+    return {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+      body: data,
+    };
   } catch (e) {
     return e;
   }
