@@ -204,7 +204,7 @@ export default function App() {
         }));
         setFiles((prev) => [...optimistic, ...prev]);
 
-        fl.forEach((file, i) => {
+        fl.forEach((file) => {
           uploadFile(file)
             .then(({ fieldId, simpleID, url }) => {
               setFiles((prev) =>
@@ -226,28 +226,9 @@ export default function App() {
               );
             });
         });
-      } else {
-        // Demo drop (click without real file)
-        setFiles((prev) => [
-          {
-            name: `dropped-${Date.now() % 10000}.bin`,
-            size: 1024 * (10 + Math.floor(Math.random() * 200)),
-            type: "application/octet-stream",
-            fieldId: rid(),
-            filedAt: "just now",
-            url: "",
-          },
-          ...prev,
-        ]);
       }
     }, 620);
   }
-
-  const onStageClick = (e) => {
-    if (view !== "box") return;
-    if (e.target.closest("[data-door]")) return;
-    animateDrop(e.clientX, e.clientY, []);
-  };
 
   const [flyerPos, setFlyerPos] = useState(null);
   useEffect(() => {
@@ -301,7 +282,6 @@ export default function App() {
             "opacity 0.55s ease-out, transform 0.7s cubic-bezier(.55,0,.6,1), filter 0.55s",
           pointerEvents: view === "box" ? "auto" : "none",
         }}
-        onClick={onStageClick}
       >
         <div ref={stageRef} style={{ position: "relative", width: 60 * px, height: 96 * px }}>
           <div
