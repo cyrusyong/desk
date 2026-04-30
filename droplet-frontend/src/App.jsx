@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dresser, FileSprite } from "./components/Dresser";
 import { InsideView, LetterOverlay } from "./components/InsideView";
 import { MailTruckLoader } from "./components/MailTruckLoader";
@@ -102,11 +102,6 @@ export default function App() {
 
   const openAmount = view === "box" ? dropOpenAmount : 0;
 
-  const [toastVisible, setToastVisible] = useState(false);
-  const showToast = useCallback(() => {
-    setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 1800);
-  }, []);
 
   useEffect(() => {
     const onDragEnter = (e) => {
@@ -189,12 +184,12 @@ export default function App() {
         setShaking(true);
         setTimeout(() => setShaking(false), 320);
       }
-      showToast();
       setTimeout(() => setDrawerState("closed"), 350);
 
       if (fl.length > 0) {
         // Real file drop: add optimistically, then update with real IDs from API
         const optimistic = fl.map((f) => ({
+          _id: rid(),
           name: f.name,
           size: f.size,
           type: f.type,
@@ -211,7 +206,11 @@ export default function App() {
               setFiles((prev) =>
                 prev.map((entry) =>
                   entry.name === file.name && entry.uploading
-                    ? { ...entry, fieldId, simpleID, url, uploading: false }
+                    ? { ...entry, fieldId, simpleID, url, uploading: false,
+                        filedAt: new Date().toLocaleString(undefined, {
+                          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                          dateStyle: "medium", timeStyle: "short",
+                        }) }
                     : entry,
                 ),
               );
@@ -350,7 +349,6 @@ export default function App() {
         </div>
       )}
 
-      <div className={`toast ${toastVisible ? "show" : ""}`}>FILED &nbsp;✓</div>
 
       <InsideView
         files={files}
@@ -360,7 +358,7 @@ export default function App() {
           setOpenedFile(null);
         }}
         onOpenLetter={(f) => {
-          setOpenedFile(f);
+          setOpenedFile(f._id ?? f.fieldId);
           setView("letter");
         }}
         px={3}
@@ -368,7 +366,7 @@ export default function App() {
 
       {view === "letter" && (
         <LetterOverlay
-          file={openedFile}
+          file={files.find((f) => (f._id ?? f.fieldId) === openedFile) ?? null}
           onClose={() => {
             setOpenedFile(null);
             setView("inside");

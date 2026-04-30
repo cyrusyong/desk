@@ -74,7 +74,7 @@ function Puff({ delay, px }) {
 const ROAD_PX = 480;
 
 // phase: "loading" | "fadeOut" | "filed" | "hidden"
-export function MailTruckLoader({ isLoading = true, uploadingFiles = [], px = 5, speed = 3 }) {
+export function MailTruckLoader({ isLoading = true, uploadingFiles = [], px = 5, speed = 3, truckOnly = false }) {
   const [wheelFrame, setWheelFrame] = useState(0);
   const [bob, setBob] = useState(0);
   const [phase, setPhase] = useState("hidden");
@@ -121,9 +121,16 @@ export function MailTruckLoader({ isLoading = true, uploadingFiles = [], px = 5,
   const isVisible = phase === "loading" || phase === "fadeOut";
   const isFiled = phase === "filed";
 
+  const roadWidth = truckOnly ? "100%" : ROAD_PX;
+
   return (
     <div
-      style={{
+      style={truckOnly ? {
+        position: "relative",
+        width: "100%",
+        fontFamily: "'Press Start 2P', monospace",
+        imageRendering: "pixelated",
+      } : {
         position: "fixed",
         bottom: 32,
         left: "50%",
@@ -147,7 +154,7 @@ export function MailTruckLoader({ isLoading = true, uploadingFiles = [], px = 5,
         <div
           style={{
             position: "relative",
-            width: ROAD_PX,
+            width: roadWidth,
             height: truckH,
             overflow: "hidden",
           }}
@@ -185,68 +192,72 @@ export function MailTruckLoader({ isLoading = true, uploadingFiles = [], px = 5,
           </div>
         </div>
 
-        {/* Dashed road line */}
-        <div
-          style={{
-            width: "100%",
-            borderTop: "3px dashed #a89868",
-            marginBottom: 10,
-            opacity: 0.7,
-          }}
-        />
-
-        {/* Upload info panel */}
-        <div
-          style={{
-            background: "#f4ecd6",
-            border: "3px solid #1b2a3a",
-            boxShadow: "4px 4px 0 0 #0a1422",
-            padding: "14px 16px 12px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
+        {!truckOnly && (
+          <>
+            {/* Dashed road line */}
             <div
               style={{
-                background: "#2477c9",
-                color: "#f4ecd6",
-                fontSize: 9,
-                letterSpacing: 0.5,
-                padding: "6px 10px",
-                border: "2px solid #1b2a3a",
-                boxShadow: "2px 2px 0 0 #0a1422",
-                whiteSpace: "nowrap",
-              }}
-            >
-              UPLOADING
-            </div>
-            <div style={{ fontFamily: "'VT323', monospace", fontSize: 20, color: "#1b2a3a", letterSpacing: 0.5 }}>
-              {count} file{count !== 1 ? "s" : ""} in transit
-            </div>
-          </div>
-
-          <div
-            style={{
-              width: "100%",
-              height: 14,
-              background: "#d8c69a",
-              border: "2px solid #1b2a3a",
-              overflow: "hidden",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                height: "100%",
-                width: "40%",
-                background: "#2477c9",
-                animation: "barSlide 1.6s ease-in-out infinite",
+                width: "100%",
+                borderTop: "3px dashed #a89868",
+                marginBottom: 10,
+                opacity: 0.7,
               }}
             />
-          </div>
-        </div>
+
+            {/* Upload info panel */}
+            <div
+              style={{
+                background: "#f4ecd6",
+                border: "3px solid #1b2a3a",
+                boxShadow: "4px 4px 0 0 #0a1422",
+                padding: "14px 16px 12px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
+                <div
+                  style={{
+                    background: "#2477c9",
+                    color: "#f4ecd6",
+                    fontSize: 9,
+                    letterSpacing: 0.5,
+                    padding: "6px 10px",
+                    border: "2px solid #1b2a3a",
+                    boxShadow: "2px 2px 0 0 #0a1422",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  UPLOADING
+                </div>
+                <div style={{ fontFamily: "'VT323', monospace", fontSize: 20, color: "#1b2a3a", letterSpacing: 0.5 }}>
+                  {count} file{count !== 1 ? "s" : ""} in transit
+                </div>
+              </div>
+
+              <div
+                style={{
+                  width: "100%",
+                  height: 14,
+                  background: "#d8c69a",
+                  border: "2px solid #1b2a3a",
+                  overflow: "hidden",
+                  position: "relative",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    height: "100%",
+                    width: "40%",
+                    background: "#2477c9",
+                    animation: "barSlide 1.6s ease-in-out infinite",
+                  }}
+                />
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* FILED confirmation — fades in after upload panel fades out */}
@@ -276,7 +287,7 @@ export function MailTruckLoader({ isLoading = true, uploadingFiles = [], px = 5,
               whiteSpace: "nowrap",
             }}
           >
-            FILED ✓
+            DELIVERED ✓
           </div>
           <div style={{ fontFamily: "'VT323', monospace", fontSize: 20, color: "#1b2a3a", letterSpacing: 0.5 }}>
             delivered to the box
@@ -287,7 +298,7 @@ export function MailTruckLoader({ isLoading = true, uploadingFiles = [], px = 5,
       <style>{`
         @keyframes truckDrive {
           0%   { transform: translateX(-${truckW}px); }
-          100% { transform: translateX(${ROAD_PX}px); }
+          100% { transform: translateX(${truckOnly ? "100%" : `${ROAD_PX}px`}); }
         }
         @keyframes puff {
           0%   { opacity: 0; transform: translate(0,0) scale(1); }

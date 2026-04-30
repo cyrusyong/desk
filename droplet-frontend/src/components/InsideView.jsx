@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { PixelMap } from "./Dresser";
+import { MailTruckLoader } from "./MailTruckLoader";
 
 function buildEnvelope(opened = false) {
   const W = 56;
@@ -467,60 +468,83 @@ export function LetterOverlay({ file, onClose }) {
 
           <Row label="size" value={formatBytes(file.size)} />
           <Row label="kind" value={file.type || guessKind(file.name)} />
-          <Row label="filed" value={file.filedAt || "just now"} />
+          {!file.uploading && <Row label="filed" value={file.filedAt || "just now"} />}
           <div style={{ height: 18 }} />
 
-          <div
-            style={{
-              border: "3px solid #1b2a3a",
-              background: "#fff8e1",
-              padding: "12px 14px",
-              fontSize: 18,
-              wordBreak: "break-all",
-              lineHeight: 1.3,
-              boxShadow: "3px 3px 0 0 #c8423a",
-            }}
-          >
+          {file.uploading ? (
             <div
               style={{
-                fontFamily: "'Press Start 2P', monospace",
-                fontSize: 9,
-                letterSpacing: 1,
-                color: "#7a4a32",
-                marginBottom: 8,
+                border: "3px solid #1b2a3a",
+                background: "#fff8e1",
+                padding: "12px 14px",
+                boxShadow: "3px 3px 0 0 #c8423a",
+                overflow: "hidden",
               }}
             >
-              ▸ FETCH FROM AWS
+              <div
+                style={{
+                  fontFamily: "'Press Start 2P', monospace",
+                  fontSize: 9,
+                  letterSpacing: 1,
+                  color: "#7a4a32",
+                  marginBottom: 10,
+                }}
+              >
+                ▸ IN TRANSIT
+              </div>
+              <MailTruckLoader isLoading={true} px={3} speed={2} truckOnly />
             </div>
-            <a
-              href={url}
-              target="_blank"
-              rel="noreferrer"
+          ) : (
+            <div
               style={{
-                color: "#1b2a3a",
-                textDecoration: "underline",
-                fontFamily: "'VT323', monospace",
+                border: "3px solid #1b2a3a",
+                background: "#fff8e1",
+                padding: "12px 14px",
                 fontSize: 18,
+                wordBreak: "break-all",
+                lineHeight: 1.3,
+                boxShadow: "3px 3px 0 0 #c8423a",
               }}
             >
-              {url}
-            </a>
-          </div>
+              <div
+                style={{
+                  fontFamily: "'Press Start 2P', monospace",
+                  fontSize: 9,
+                  letterSpacing: 1,
+                  color: "#7a4a32",
+                  marginBottom: 8,
+                }}
+              >
+                ▸ FETCH FROM AWS
+              </div>
+              <a
+                href={url}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  color: "#1b2a3a",
+                  textDecoration: "underline",
+                  fontFamily: "'VT323', monospace",
+                  fontSize: 18,
+                }}
+              >
+                {url}
+              </a>
+            </div>
+          )}
 
           <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
-            <button
-              onClick={() => navigator.clipboard?.writeText(url)}
-              style={pixelButton}
-            >
-              COPY LINK
-            </button>
+            {!file.uploading && (
+              <button
+                onClick={() => navigator.clipboard?.writeText(url)}
+                style={pixelButton}
+              >
+                COPY LINK
+              </button>
+            )}
             <button
               onClick={onClose}
-              style={{
-                ...pixelButton,
-                background: "#1b2a3a",
-                color: "#f4ecd6",
-              }}
+              style={{ ...pixelButton, background: "#1b2a3a", color: "#f4ecd6" }}
             >
               CLOSE
             </button>
