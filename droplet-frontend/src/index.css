@@ -82,11 +82,11 @@ body::before {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-3px, 1px); }
-  40% { transform: translate(3px, -1px); }
-  60% { transform: translate(-2px, 2px); }
-  80% { transform: translate(2px, 0); }
+  0%, 100% { transform: translate(-50%, -50%); }
+  20% { transform: translate(calc(-50% - 3px), calc(-50% + 1px)); }
+  40% { transform: translate(calc(-50% + 3px), calc(-50% - 1px)); }
+  60% { transform: translate(calc(-50% - 2px), calc(-50% + 2px)); }
+  80% { transform: translate(calc(-50% + 2px), -50%); }
 }
 
 .shaking {

@@ -1,9 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Dresser, FileSprite } from "./components/Dresser";
 import { InsideView, LetterOverlay } from "./components/InsideView";
-import { useTweaks, TweaksPanel, TweakSection, TweakSlider, TweakToggle, TweakColor } from "./components/TweaksPanel";
+import {
+  useTweaks,
+  TweaksPanel,
+  TweakSection,
+  TweakSlider,
+  TweakToggle,
+  TweakColor,
+} from "./components/TweaksPanel";
 
-const API_BASE = "https://uln1pianga.execute-api.us-east-2.amazonaws.com/DropletAPI";
+const API_BASE =
+  "https://uln1pianga.execute-api.us-east-2.amazonaws.com/DropletAPI";
 
 const TWEAK_DEFAULTS = {
   fileColor: "#c8423a",
@@ -13,15 +21,17 @@ const TWEAK_DEFAULTS = {
 };
 
 function rid() {
-  return Array.from({ length: 8 }, () =>
-    "abcdefghijklmnopqrstuvwxyz0123456789"[Math.floor(Math.random() * 36)],
+  return Array.from(
+    { length: 8 },
+    () =>
+      "abcdefghijklmnopqrstuvwxyz0123456789"[Math.floor(Math.random() * 36)],
   ).join("");
 }
 
 async function uploadFile(file) {
   const { fieldId, uploadUrl } = await fetch(`${API_BASE}/create-upload-url`, {
     method: "POST",
-  }).then((r) => r.json()).then((r) => typeof r.body === "string" ? JSON.parse(r.body) : r);
+  }).then((r) => r.json());
 
   await fetch(uploadUrl, { method: "PUT", body: file });
 
@@ -34,16 +44,12 @@ async function uploadFile(file) {
       fileExtension: file.name.split(".").pop(),
       fileSize: file.size,
     }),
-  }).then((r) => r.json()).then((r) => typeof r.body === "string" ? JSON.parse(r.body) : r);
+  }).then((r) => r.json());
 
   return {
     fieldId,
     simpleID,
-    name: file.name,
-    size: file.size,
-    type: file.type,
-    filedAt: "just now",
-    url: `${window.location.origin}/${simpleID}`,
+    url: `https://s3.us-east-2.amazonaws.com/droplet.app/${fieldId}`,
   };
 }
 
@@ -83,7 +89,11 @@ export default function App() {
     const onDragEnter = (e) => {
       e.preventDefault();
       if (view !== "box") return;
-      if (!e.dataTransfer || ![...(e.dataTransfer.types || [])].includes("Files")) return;
+      if (
+        !e.dataTransfer ||
+        ![...(e.dataTransfer.types || [])].includes("Files")
+      )
+        return;
       setDragging(true);
       setDrawerState((s) => (s === "closed" ? "opening" : s));
     };
@@ -140,7 +150,13 @@ export default function App() {
     if (!drawer) return;
     const targetX = drawer.left + drawer.width * 0.5 - 44;
     const targetY = drawer.top + drawer.height * 0.18;
-    setFlyer({ startX: x - 44, startY: y - 32, targetX, targetY, id: Date.now() });
+    setFlyer({
+      startX: x - 44,
+      startY: y - 32,
+      targetX,
+      targetY,
+      id: Date.now(),
+    });
     setDrawerState("catching");
 
     setTimeout(() => {
@@ -168,11 +184,11 @@ export default function App() {
 
         fl.forEach((file, i) => {
           uploadFile(file)
-            .then((resolved) => {
+            .then(({ fieldId, simpleID, url }) => {
               setFiles((prev) =>
                 prev.map((entry) =>
                   entry.name === file.name && entry.uploading
-                    ? { ...entry, ...resolved, uploading: false }
+                    ? { ...entry, fieldId, simpleID, url, uploading: false }
                     : entry,
                 ),
               );
@@ -259,7 +275,8 @@ export default function App() {
           opacity: view === "box" ? 1 : 0,
           transform: view === "box" ? "scale(1)" : "scale(2.6)",
           filter: view === "box" ? "blur(0)" : "blur(8px)",
-          transition: "opacity 0.55s ease-out, transform 0.7s cubic-bezier(.55,0,.6,1), filter 0.55s",
+          transition:
+            "opacity 0.55s ease-out, transform 0.7s cubic-bezier(.55,0,.6,1), filter 0.55s",
           pointerEvents: view === "box" ? "auto" : "none",
         }}
         onClick={onStageClick}
@@ -332,23 +349,47 @@ export default function App() {
       <InsideView
         files={files}
         visible={view === "inside" || view === "letter"}
-        onBack={() => { setView("box"); setOpenedFile(null); }}
-        onOpenLetter={(f) => { setOpenedFile(f); setView("letter"); }}
+        onBack={() => {
+          setView("box");
+          setOpenedFile(null);
+        }}
+        onOpenLetter={(f) => {
+          setOpenedFile(f);
+          setView("letter");
+        }}
         px={3}
       />
 
       {view === "letter" && (
         <LetterOverlay
           file={openedFile}
-          onClose={() => { setOpenedFile(null); setView("inside"); }}
+          onClose={() => {
+            setOpenedFile(null);
+            setView("inside");
+          }}
         />
       )}
 
       <TweaksPanel title="Tweaks">
         <TweakSection label="Mailbox">
-          <TweakToggle label="Shake on slam" value={tweaks.shakeOnSlam} onChange={(v) => setTweak("shakeOnSlam", v)} />
-          <TweakToggle label="Ambient motes" value={tweaks.ambientMotes} onChange={(v) => setTweak("ambientMotes", v)} />
-          <TweakSlider label="Pixel scale" min={4} max={10} step={1} value={tweaks.pixelScale} onChange={(v) => setTweak("pixelScale", v)} />
+          <TweakToggle
+            label="Shake on slam"
+            value={tweaks.shakeOnSlam}
+            onChange={(v) => setTweak("shakeOnSlam", v)}
+          />
+          <TweakToggle
+            label="Ambient motes"
+            value={tweaks.ambientMotes}
+            onChange={(v) => setTweak("ambientMotes", v)}
+          />
+          <TweakSlider
+            label="Pixel scale"
+            min={4}
+            max={10}
+            step={1}
+            value={tweaks.pixelScale}
+            onChange={(v) => setTweak("pixelScale", v)}
+          />
         </TweakSection>
         <TweakSection label="Mail">
           <TweakColor
