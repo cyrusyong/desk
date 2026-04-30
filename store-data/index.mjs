@@ -22,7 +22,7 @@ export const handler = async (event) => {
       fileName: body.fileName,
       fileExtension: body.fileExtension,
       fileSize: body.fileSize,
-      TTL: Math.floor(Date.now() / 1000) + 86400, // 24 hours from now
+      TTL: Math.floor(Date.now() / 1000) + 30, // 30 seconds from now
     },
   };
 
