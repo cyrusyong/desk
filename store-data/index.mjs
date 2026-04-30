@@ -22,6 +22,7 @@ export const handler = async (event) => {
       fileName: body.fileName,
       fileExtension: body.fileExtension,
       fileSize: body.fileSize,
+      trackingNumber: body.trackingNumber,
       TTL: Math.floor(Date.now() / 1000) + 86400,
     },
   };
