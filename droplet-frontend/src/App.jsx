@@ -22,17 +22,37 @@ const TWEAK_DEFAULTS = {
 };
 
 const TRACKING_ADJECTIVES = [
-  "blue", "red", "gold", "dark", "wild", "fast", "keen", "bold", "warm", "cool",
+  "blue",
+  "red",
+  "gold",
+  "dark",
+  "wild",
+  "fast",
+  "keen",
+  "bold",
+  "warm",
+  "cool",
 ];
 const TRACKING_ANIMALS = [
-  "fox", "owl", "bear", "wolf", "hawk", "deer", "crow", "lynx", "frog", "crab",
+  "fox",
+  "owl",
+  "bear",
+  "wolf",
+  "hawk",
+  "deer",
+  "crow",
+  "lynx",
+  "frog",
+  "crab",
 ];
 
 function getOrCreateTrackingNumber() {
   const stored = localStorage.getItem("droplet_tracking_id");
   if (stored) return stored;
-  const adj = TRACKING_ADJECTIVES[Math.floor(Math.random() * TRACKING_ADJECTIVES.length)];
-  const animal = TRACKING_ANIMALS[Math.floor(Math.random() * TRACKING_ANIMALS.length)];
+  const adj =
+    TRACKING_ADJECTIVES[Math.floor(Math.random() * TRACKING_ADJECTIVES.length)];
+  const animal =
+    TRACKING_ANIMALS[Math.floor(Math.random() * TRACKING_ANIMALS.length)];
   const digit = Math.floor(Math.random() * 9) + 1;
   const id = `${adj}-${animal}-${digit}`;
   localStorage.setItem("droplet_tracking_id", id);
@@ -90,7 +110,9 @@ export default function App() {
   const [flyer, setFlyer] = useState(null);
   const stageRef = useRef(null);
 
-  const [trackingNumber, setTrackingNumber] = useState(() => getOrCreateTrackingNumber());
+  const [trackingNumber, setTrackingNumber] = useState(() =>
+    getOrCreateTrackingNumber(),
+  );
 
   function fetchByTracking(id) {
     fetch(`${API_BASE}/list-data?trackingNumber=${encodeURIComponent(id)}`)
@@ -126,7 +148,6 @@ export default function App() {
         : 0;
 
   const openAmount = view === "box" ? dropOpenAmount : 0;
-
 
   useEffect(() => {
     const onDragEnter = (e) => {
@@ -231,11 +252,19 @@ export default function App() {
               setFiles((prev) =>
                 prev.map((entry) =>
                   entry.name === file.name && entry.uploading
-                    ? { ...entry, fieldId, simpleID, url, uploading: false,
+                    ? {
+                        ...entry,
+                        fieldId,
+                        simpleID,
+                        url,
+                        uploading: false,
                         filedAt: new Date().toLocaleString(undefined, {
-                          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                          dateStyle: "medium", timeStyle: "short",
-                        }) }
+                          timeZone:
+                            Intl.DateTimeFormat().resolvedOptions().timeZone,
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        }),
+                      }
                     : entry,
                 ),
               );
@@ -278,7 +307,7 @@ export default function App() {
           transition: "opacity 0.3s",
         }}
       >
-        DROPLET
+        LETTERDROP
         <span className="sub">drop a file &middot; or open the door</span>
       </div>
       <div
@@ -373,7 +402,6 @@ export default function App() {
           <FileSprite px={4} />
         </div>
       )}
-
 
       <InsideView
         files={files}
