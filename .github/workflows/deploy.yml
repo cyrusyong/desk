@@ -9,6 +9,7 @@ on:
       - "get-data/**"
       - "list-data/**"
       - "deleteS3Object/**"
+      - "delete-data/**"
 
 jobs:
   deploy-getS3url:
@@ -102,6 +103,29 @@ jobs:
           aws_region: us-east-2
           function_name: list-data
           zip_file: list-data.zip
+
+  deploy-delete-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        working-directory: ./delete-data
+        run: npm install
+
+      - name: Zip Lambda
+        working-directory: ./delete-data
+        run: zip -r ../delete-data.zip .
+
+      - name: Deploy Lambda
+        uses: appleboy/lambda-action@v0.2.0
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: us-east-2
+          function_name: delete-data
+          zip_file: delete-data.zip
 
   deploy-delete-s3-object:
     runs-on: ubuntu-latest

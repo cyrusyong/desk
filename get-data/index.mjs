@@ -17,19 +17,37 @@ export const handler = async (event) => {
     },
   };
 
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "application/json",
+  };
+
   try {
     const data = await doc_client.send(new GetCommand(params));
-    const fieldID = data.Item.fieldID;
 
+    if (!data.Item) {
+      return {
+        statusCode: 404,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: "File not found" }),
+      };
+    }
+
+    if (data.Item.deleted) {
+      return {
+        statusCode: 404,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: "File has been shredded." }),
+      };
+    }
+
+    const fieldID = data.Item.fieldID;
     data.Item["object_url"] =
       `https://s3.us-east-2.amazonaws.com/droplet.app/${fieldID}`;
 
     return {
       status: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
+      headers: corsHeaders,
       body: data,
     };
   } catch (e) {

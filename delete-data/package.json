@@ -1,0 +1,10 @@
+{
+  "name": "delete-data",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.948.0",
+    "@aws-sdk/lib-dynamodb": "^3.948.0",
+    "@aws-sdk/client-s3": "^3.948.0"
+  }
+}

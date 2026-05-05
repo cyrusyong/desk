@@ -28,7 +28,7 @@ export const handler = async (event) => {
     return {
       statusCode: 200,
       headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ items: data.Items || [] }),
+      body: JSON.stringify({ items: (data.Items || []).filter((item) => !item.deleted) }),
     };
   } catch (e) {
     return {

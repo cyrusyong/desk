@@ -402,6 +402,16 @@ export default function App() {
             setOpenedFile(null);
             setView("inside");
           }}
+          onShred={async (simpleID) => {
+            await fetch(`${API_BASE}/delete-data`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ simpleID }),
+            });
+            setFiles((prev) => prev.filter((f) => f.simpleID !== simpleID));
+            setOpenedFile(null);
+            setView("inside");
+          }}
         />
       )}
 

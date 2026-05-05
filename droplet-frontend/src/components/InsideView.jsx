@@ -489,7 +489,8 @@ function guessKind(name) {
   return map[ext] || "application/octet-stream";
 }
 
-export function LetterOverlay({ file, onClose }) {
+export function LetterOverlay({ file, onClose, onShred }) {
+  const [confirming, setConfirming] = useState(false);
   if (!file) return null;
   const url =
     file.url ||
@@ -674,7 +675,7 @@ export function LetterOverlay({ file, onClose }) {
             </div>
           )}
 
-          <div style={{ display: "flex", gap: 10, marginTop: 22 }}>
+          <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap" }}>
             {!file.uploading && (
               <button
                 onClick={() => navigator.clipboard?.writeText(url)}
@@ -689,6 +690,50 @@ export function LetterOverlay({ file, onClose }) {
             >
               CLOSE
             </button>
+            {!file.uploading && !confirming && (
+              <button
+                onClick={() => setConfirming(true)}
+                style={{
+                  ...pixelButton,
+                  background: "#c8423a",
+                  color: "#f4ecd6",
+                  border: "3px solid #8a2722",
+                  boxShadow: "3px 3px 0 0 #5a1a12",
+                  marginLeft: "auto",
+                }}
+              >
+                SHRED
+              </button>
+            )}
+            {!file.uploading && confirming && (
+              <>
+                <button
+                  onClick={() => onShred(file.simpleID)}
+                  style={{
+                    ...pixelButton,
+                    background: "#c8423a",
+                    color: "#f4ecd6",
+                    border: "3px solid #8a2722",
+                    boxShadow: "3px 3px 0 0 #5a1a12",
+                    marginLeft: "auto",
+                  }}
+                >
+                  CONFIRM?
+                </button>
+                <button
+                  onClick={() => setConfirming(false)}
+                  style={{
+                    ...pixelButton,
+                    background: "transparent",
+                    color: "#7a4a32",
+                    border: "3px solid #7a4a32",
+                    boxShadow: "3px 3px 0 0 #4a2a18",
+                  }}
+                >
+                  CANCEL
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
