@@ -157,13 +157,6 @@ function TrackingBar({ trackingNumber, onTrackingNumberChange, onLookup }) {
     const trimmed = draft.trim();
     if (trimmed) {
       onTrackingNumberChange(trimmed);
-      setEditing(false);
-    }
-  }
-
-  function handleLookup() {
-    const trimmed = draft.trim();
-    if (trimmed) {
       onLookup(trimmed);
       setEditing(false);
     }
@@ -205,7 +198,7 @@ function TrackingBar({ trackingNumber, onTrackingNumberChange, onLookup }) {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") handleLookup();
+            if (e.key === "Enter") handleSave();
             if (e.key === "Escape") setEditing(false);
           }}
           style={{
@@ -252,22 +245,6 @@ function TrackingBar({ trackingNumber, onTrackingNumberChange, onLookup }) {
             }}
           >
             SAVE
-          </button>
-          <button
-            onClick={handleLookup}
-            style={{
-              fontFamily: "'Press Start 2P', monospace",
-              fontSize: 8,
-              letterSpacing: 0.5,
-              background: "#c8423a",
-              color: "#f4ecd6",
-              border: "3px solid #1b2a3a",
-              padding: "8px 10px",
-              cursor: "pointer",
-              boxShadow: "3px 3px 0 0 #0a1422",
-            }}
-          >
-            LOOK UP
           </button>
           <button
             onClick={() => { setDraft(trackingNumber); setEditing(false); }}
